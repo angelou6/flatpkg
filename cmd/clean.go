@@ -2,8 +2,8 @@ package cmd
 
 import (
 	c "flatpkg/colorize"
-	"flatpkg/exit"
 	"flatpkg/flathub"
+	"flatpkg/utils"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,12 +23,12 @@ var cleanCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		ids, err := flathub.GetInstalledIds()
 		if err != nil {
-			exit.ErrorExit(err.Error())
+			utils.ErrorExit(err.Error())
 		}
 
 		dirs, err := os.ReadDir(flatpakDir)
 		if err != nil {
-			exit.ErrorExit(err.Error())
+			utils.ErrorExit(err.Error())
 		}
 
 		for _, dir := range dirs {
@@ -36,7 +36,7 @@ var cleanCmd = &cobra.Command{
 				name := dir.Name()
 				err := os.RemoveAll(filepath.Join(flatpakDir, name))
 				if err != nil {
-					exit.ErrorExit(fmt.Sprintf("Could not delete data for %s", name))
+					utils.ErrorExit(fmt.Sprintf("Could not delete data for %s", name))
 				}
 
 				c.Green.Print("[Deleted] ")

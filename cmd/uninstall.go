@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"flatpkg/exit"
 	"flatpkg/flathub"
+	"flatpkg/utils"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -14,20 +14,21 @@ var uninstallCmd = &cobra.Command{
 	Short:   "uninstall packages",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			exit.ErrorExit("Package to uninstall needs to be specified.")
+			utils.ErrorExit("Package to uninstall needs to be specified.")
 		}
 
 		yes, _ := cmd.Flags().GetBool("yes")
 		deleteData, _ := cmd.Flags().GetBool("delete-data")
 		err := flathub.Remove(strings.Join(args, " "), yes, deleteData)
 		if err != nil {
-			exit.ErrorExit(err.Error())
+			utils.ErrorExit(err.Error())
 		}
 	},
 }
 
 func init() {
+	rootCmd.AddCommand(uninstallCmd)
 	uninstallCmd.Flags().BoolP("yes", "y", false, "skips user interactions")
 	uninstallCmd.Flags().BoolP("delete-data", "d", false, "Deletes application data")
-	rootCmd.AddCommand(uninstallCmd)
+	uninstallCmd.ValidArgsFunction = utils.InstalledCompletion
 }

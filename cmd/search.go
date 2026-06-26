@@ -2,8 +2,8 @@ package cmd
 
 import (
 	c "flatpkg/colorize"
-	"flatpkg/exit"
 	"flatpkg/flathub"
+	"flatpkg/utils"
 	"fmt"
 	"strings"
 
@@ -15,14 +15,14 @@ var searchCmd = &cobra.Command{
 	Short: "search a package",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			exit.ErrorExit("Package to search needs to be specified.")
+			utils.ErrorExit("Package to search needs to be specified.")
 		}
 
 		query := strings.Join(args, " ")
 
 		res, err := flathub.Search(query)
 		if err != nil {
-			exit.ErrorExit(err.Error())
+			utils.ErrorExit(err.Error())
 		}
 
 		for _, hit := range res.Hits {
@@ -35,4 +35,5 @@ var searchCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
+	searchCmd.ValidArgsFunction = utils.FlathubCompletions
 }
