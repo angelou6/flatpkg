@@ -7,6 +7,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func installCompletion(
+	cmd *cobra.Command,
+	args []string,
+	toComplete string,
+) ([]string, cobra.ShellCompDirective) {
+	res, err := flathub.Search(toComplete)
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveError
+	}
+
+	completions := []cobra.Completion{}
+	for _, hit := range res.Hits {
+		completions = append(completions, cobra.CompletionWithDesc(hit.Id, hit.Name))
+	}
+
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
 var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "install packages",
@@ -35,5 +53,5 @@ var installCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(installCmd)
 	installCmd.Flags().BoolP("yes", "y", false, "skips user interactions")
-	installCmd.ValidArgsFunction = utils.FlathubCompletions
+	installCmd.ValidArgsFunction = installCompletion
 }

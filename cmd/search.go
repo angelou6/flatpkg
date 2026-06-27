@@ -10,6 +10,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func searchCompletion(
+	cmd *cobra.Command,
+	args []string,
+	toComplete string,
+) ([]string, cobra.ShellCompDirective) {
+	res, err := flathub.Search(toComplete)
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveError
+	}
+
+	completions := []cobra.Completion{}
+	for _, hit := range res.Hits {
+		completions = append(completions, cobra.CompletionWithDesc(hit.Name, hit.Id))
+	}
+
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search a package",
@@ -26,7 +44,7 @@ var searchCmd = &cobra.Command{
 		}
 
 		for _, hit := range res.Hits {
-			fmt.Println(hit.Name)
+			fmt.Printf("%s (%s)\n", hit.Name, hit.Id)
 			c.Grey.Println(" ", hit.Summary)
 		}
 
@@ -35,5 +53,5 @@ var searchCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
-	searchCmd.ValidArgsFunction = utils.FlathubCompletions
+	searchCmd.ValidArgsFunction = searchCompletion
 }

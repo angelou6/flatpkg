@@ -1,6 +1,6 @@
 # Flatpkg
 
-Flathub CLI because the Flatpak CLI is a pain to use.
+CLI that searches on Flathub directly because the Flatpak CLI is a pain to use.
 
 # Usage
 
@@ -24,7 +24,7 @@ Run `go build` and place the binary wherever you want.
 To get completion working, run the following command:
 
 ```sh
-flatpkg completion <your-shell> > <completions-location>
+flatpkg completion YOUR-SHELL > COMPLETIONS-LOCATION
 ```
 
 The completion location varies depending on the shell, here are some locations of popular shells:
